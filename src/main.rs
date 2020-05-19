@@ -255,7 +255,10 @@ fn main() -> Result<()> {
     amvideo.open()?;
 
     // Get VBIOS version
-    match amvideo.get_vbios_version().context("Failed to get VBIOS version") {
+    match amvideo
+        .get_vbios_version()
+        .context("Failed to get VBIOS version")
+    {
         Ok(vbios_version) => println!("VBIOS Version: {}", vbios_version),
         Err(e) => eprintln!("{:?}", e),
     };
