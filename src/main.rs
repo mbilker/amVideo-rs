@@ -255,8 +255,10 @@ fn main() -> Result<()> {
     amvideo.open()?;
 
     // Get VBIOS version
-    let vbios_version = amvideo.get_vbios_version()?;
-    println!("VBIOS Version: {}", vbios_version);
+    match amvideo.get_vbios_version().context("Failed to get VBIOS version") {
+        Ok(vbios_version) => println!("VBIOS Version: {}", vbios_version),
+        Err(e) => eprintln!("{:?}", e),
+    };
 
     // Set resolution
     let resolution = AmVideoSetting {
