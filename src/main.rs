@@ -44,15 +44,30 @@ struct AmVideoContext {
     data: [u8; AM_VIDEO_CONTEXT_DATA_SIZE],
 }
 
+#[derive(Debug)]
 #[repr(C)]
 struct AmVideoSetting {
     version: u32,
     use_segatiming: u32,
-    mode: u32,
+    mode: AmVideoMode,
     resolution_1: AmVideoResolution,
     resolution_2: AmVideoResolution,
 }
 
+#[allow(unused)]
+#[derive(Debug)]
+#[repr(u32)]
+enum AmVideoMode {
+    /// Single display mode using `resolution_1`
+    Single = 0,
+    /// Single or dual display mode using `resolution_1` for both displays. Does not fail if a
+    /// second display is not connected.
+    CloneVideoMode = 1,
+    /// Dual display mode using both `resolution_1` and `resolution_2`
+    DualVideoMode = 4,
+}
+
+#[derive(Debug)]
 #[repr(C)]
 struct AmVideoResolution {
     width: u16,
@@ -267,7 +282,7 @@ fn main() -> Result<()> {
     let resolution = AmVideoSetting {
         version: 1,
         use_segatiming: 1,
-        mode: 1,
+        mode: AmVideoMode::Single,
         resolution_1: AmVideoResolution {
             width: 1920,
             height: 1080,
@@ -277,6 +292,7 @@ fn main() -> Result<()> {
             height: 1080,
         },
     };
+    println!("Attempting to set resolution: {:#?}", resolution);
     amvideo.set_resolution(&resolution)?;
 
     println!("Done");
